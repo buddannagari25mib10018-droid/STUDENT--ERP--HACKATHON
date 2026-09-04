@@ -1,0 +1,2229 @@
+import { useState } from 'react'
+import './App.css'
+
+const initialStudents = [
+  {
+    id: 'STU001',
+    name: 'Rahul Sharma',
+    course: 'Computer Science',
+    attendance: 92,
+    performance: 'Excellent',
+    status: 'Good'
+  },
+  {
+    id: 'STU002',
+    name: 'Ananya Patel',
+    course: 'Artificial Intelligence',
+    attendance: 78,
+    performance: 'Good',
+    status: 'Normal'
+  },
+  {
+    id: 'STU003',
+    name: 'Arjun Kumar',
+    course: 'Data Science',
+    attendance: 61,
+    performance: 'Needs Improvement',
+    status: 'At Risk'
+  },
+  {
+    id: 'STU004',
+    name: 'Priya Reddy',
+    course: 'Artificial Intelligence',
+    attendance: 89,
+    performance: 'Excellent',
+    status: 'Good'
+  },
+  {
+    id: 'STU005',
+    name: 'Vikram Singh',
+    course: 'Computer Science',
+    attendance: 69,
+    performance: 'Average',
+    status: 'Normal'
+  }
+]
+
+const initialCourses = [
+  {
+    code: 'AI101',
+    name: 'Introduction to Artificial Intelligence',
+    faculty: 'Dr. Kumar',
+    credits: 4,
+    semester: 'Semester 1'
+  },
+  {
+    code: 'CS102',
+    name: 'Data Structures',
+    faculty: 'Prof. Sharma',
+    credits: 4,
+    semester: 'Semester 1'
+  },
+  {
+    code: 'DS201',
+    name: 'Machine Learning',
+    faculty: 'Dr. Priya',
+    credits: 3,
+    semester: 'Semester 2'
+  },
+  {
+    code: 'MA103',
+    name: 'Engineering Mathematics',
+    faculty: 'Prof. Reddy',
+    credits: 4,
+    semester: 'Semester 1'
+  }
+]
+
+const initialAttendance = [
+  {
+    id: 1,
+    student: 'Rahul Sharma',
+    course: 'Computer Science',
+    totalClasses: 40,
+    present: 37,
+    percentage: 92.5,
+    status: 'Good'
+  },
+  {
+    id: 2,
+    student: 'Ananya Patel',
+    course: 'Artificial Intelligence',
+    totalClasses: 40,
+    present: 31,
+    percentage: 77.5,
+    status: 'Normal'
+  },
+  {
+    id: 3,
+    student: 'Arjun Kumar',
+    course: 'Data Science',
+    totalClasses: 40,
+    present: 24,
+    percentage: 60,
+    status: 'At Risk'
+  },
+  {
+    id: 4,
+    student: 'Priya Reddy',
+    course: 'Artificial Intelligence',
+    totalClasses: 40,
+    present: 36,
+    percentage: 90,
+    status: 'Good'
+  },
+  {
+    id: 5,
+    student: 'Vikram Singh',
+    course: 'Computer Science',
+    totalClasses: 40,
+    present: 28,
+    percentage: 70,
+    status: 'Normal'
+  }
+]
+
+const initialExams = [
+  {
+    id: 1,
+    student: 'Rahul Sharma',
+    subject: 'Data Structures',
+    internal: 24,
+    external: 62,
+    total: 86,
+    grade: 'A'
+  },
+  {
+    id: 2,
+    student: 'Ananya Patel',
+    subject: 'Artificial Intelligence',
+    internal: 21,
+    external: 55,
+    total: 76,
+    grade: 'B'
+  },
+  {
+    id: 3,
+    student: 'Arjun Kumar',
+    subject: 'Machine Learning',
+    internal: 16,
+    external: 42,
+    total: 58,
+    grade: 'C'
+  },
+  {
+    id: 4,
+    student: 'Priya Reddy',
+    subject: 'Artificial Intelligence',
+    internal: 25,
+    external: 61,
+    total: 86,
+    grade: 'A'
+  },
+  {
+    id: 5,
+    student: 'Vikram Singh',
+    subject: 'Data Structures',
+    internal: 19,
+    external: 48,
+    total: 67,
+    grade: 'B'
+  }
+]
+
+const initialFees = [
+  {
+    id: 1,
+    student: 'Rahul Sharma',
+    total: 120000,
+    paid: 120000,
+    pending: 0,
+    status: 'Paid'
+  },
+  {
+    id: 2,
+    student: 'Ananya Patel',
+    total: 120000,
+    paid: 90000,
+    pending: 30000,
+    status: 'Partial'
+  },
+  {
+    id: 3,
+    student: 'Arjun Kumar',
+    total: 120000,
+    paid: 60000,
+    pending: 60000,
+    status: 'Partial'
+  },
+  {
+    id: 4,
+    student: 'Priya Reddy',
+    total: 120000,
+    paid: 120000,
+    pending: 0,
+    status: 'Paid'
+  },
+  {
+    id: 5,
+    student: 'Vikram Singh',
+    total: 120000,
+    paid: 80000,
+    pending: 40000,
+    status: 'Partial'
+  }
+]
+
+const timetable = [
+  {
+    id: 1,
+    day: 'Monday',
+    time: '09:00 - 10:00',
+    subject: 'Artificial Intelligence',
+    faculty: 'Dr. Kumar',
+    room: 'A-101'
+  },
+  {
+    id: 2,
+    day: 'Monday',
+    time: '10:00 - 11:00',
+    subject: 'Data Structures',
+    faculty: 'Prof. Sharma',
+    room: 'A-102'
+  },
+  {
+    id: 3,
+    day: 'Monday',
+    time: '11:30 - 12:30',
+    subject: 'Mathematics',
+    faculty: 'Prof. Reddy',
+    room: 'B-201'
+  },
+  {
+    id: 4,
+    day: 'Tuesday',
+    time: '09:00 - 10:00',
+    subject: 'Machine Learning',
+    faculty: 'Dr. Priya',
+    room: 'AI-Lab'
+  },
+  {
+    id: 5,
+    day: 'Tuesday',
+    time: '10:00 - 11:00',
+    subject: 'Data Structures',
+    faculty: 'Prof. Sharma',
+    room: 'A-102'
+  },
+  {
+    id: 6,
+    day: 'Tuesday',
+    time: '11:30 - 12:30',
+    subject: 'Artificial Intelligence',
+    faculty: 'Dr. Kumar',
+    room: 'A-101'
+  }
+]
+
+const menuItems = [
+  { icon: '📊', name: 'Dashboard' },
+  { icon: '👨‍🎓', name: 'Students' },
+  { icon: '📚', name: 'Academics' },
+  { icon: '📅', name: 'Attendance' },
+  { icon: '📝', name: 'Examinations' },
+  { icon: '💰', name: 'Fees' },
+  { icon: '🔔', name: 'Notifications' },
+  { icon: '🗓️', name: 'Timetable' }
+]
+
+function App() {
+  const [activePage, setActivePage] = useState('Dashboard')
+
+  const [studentList, setStudentList] = useState(initialStudents)
+
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const [courses] = useState(initialCourses)
+
+  const [attendance] = useState(initialAttendance)
+
+  const [exams] = useState(initialExams)
+
+  const [fees] = useState(initialFees)
+
+  const [showStudentForm, setShowStudentForm] = useState(false)
+
+  const [editingStudent, setEditingStudent] = useState(null)
+
+  const [newStudent, setNewStudent] = useState({
+    name: '',
+    course: '',
+    attendance: '',
+    performance: 'Good'
+  })
+
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: 'Low Attendance Alert',
+      message: 'Arjun Kumar attendance is below 65%.',
+      type: 'warning',
+      date: 'Today'
+    },
+    {
+      id: 2,
+      title: 'Examination Notice',
+      message: 'Mid-semester examination results have been updated.',
+      type: 'info',
+      date: 'Today'
+    },
+    {
+      id: 3,
+      title: 'Fee Reminder',
+      message: 'Some students have pending fee payments.',
+      type: 'warning',
+      date: 'Today'
+    }
+  ])
+
+  const [showNotificationForm, setShowNotificationForm] =
+    useState(false)
+
+  const [newNotification, setNewNotification] = useState({
+    title: '',
+    message: '',
+    type: 'info'
+  })
+
+  const filteredStudents = studentList.filter((student) => {
+    const search = searchTerm.toLowerCase()
+
+    return (
+      student.name.toLowerCase().includes(search) ||
+      student.id.toLowerCase().includes(search) ||
+      student.course.toLowerCase().includes(search)
+    )
+  })
+  // ================= STUDENT FUNCTIONS =================
+
+  const handleStudentChange = (name, value) => {
+    setNewStudent({
+      ...newStudent,
+      [name]: value
+    })
+  }
+
+  const closeStudentForm = () => {
+    setShowStudentForm(false)
+    setEditingStudent(null)
+
+    setNewStudent({
+      name: '',
+      course: '',
+      attendance: '',
+      performance: 'Good'
+    })
+  }
+
+  const handleAddStudent = (e) => {
+    e.preventDefault()
+
+    if (
+      !newStudent.name ||
+      !newStudent.course ||
+      !newStudent.attendance
+    ) {
+      alert('Please fill all required fields.')
+      return
+    }
+
+    const attendanceValue = Number(newStudent.attendance)
+
+    let status = 'Normal'
+
+    if (attendanceValue >= 85) {
+      status = 'Good'
+    } else if (attendanceValue < 65) {
+      status = 'At Risk'
+    }
+
+    const newId = `STU${String(studentList.length + 1).padStart(3, '0')}`
+
+    const student = {
+      id: newId,
+      name: newStudent.name,
+      course: newStudent.course,
+      attendance: attendanceValue,
+      performance: newStudent.performance,
+      status: status
+    }
+
+    setStudentList([...studentList, student])
+
+    closeStudentForm()
+  }
+
+  const openEditStudent = (student) => {
+    setEditingStudent(student)
+
+    setNewStudent({
+      name: student.name,
+      course: student.course,
+      attendance: student.attendance,
+      performance: student.performance
+    })
+
+    setShowStudentForm(true)
+  }
+
+  const handleEditStudent = (e) => {
+    e.preventDefault()
+
+    const attendanceValue = Number(newStudent.attendance)
+
+    let status = 'Normal'
+
+    if (attendanceValue >= 85) {
+      status = 'Good'
+    } else if (attendanceValue < 65) {
+      status = 'At Risk'
+    }
+
+    const updatedList = studentList.map((student) =>
+      student.id === editingStudent.id
+        ? {
+            ...student,
+            name: newStudent.name,
+            course: newStudent.course,
+            attendance: attendanceValue,
+            performance: newStudent.performance,
+            status: status
+          }
+        : student
+    )
+
+    setStudentList(updatedList)
+
+    closeStudentForm()
+  }
+
+  const handleDeleteStudent = (id) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this student?'
+    )
+
+    if (confirmDelete) {
+      setStudentList(
+        studentList.filter((student) => student.id !== id)
+      )
+    }
+  }
+
+  // ================= NOTIFICATION FUNCTIONS =================
+
+  const handleNotificationChange = (e) => {
+    setNewNotification({
+      ...newNotification,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const addNotification = (e) => {
+    e.preventDefault()
+
+    if (
+      !newNotification.title ||
+      !newNotification.message
+    ) {
+      alert('Please fill all fields.')
+      return
+    }
+
+    const notification = {
+      id: notifications.length + 1,
+      title: newNotification.title,
+      message: newNotification.message,
+      type: newNotification.type,
+      date: new Date().toLocaleDateString()
+    }
+
+    setNotifications([
+      notification,
+      ...notifications
+    ])
+
+    setNewNotification({
+      title: '',
+      message: '',
+      type: 'info'
+    })
+
+    setShowNotificationForm(false)
+  }
+
+  // ================= PAGE DESCRIPTION =================
+
+  const getPageDescription = () => {
+    const descriptions = {
+      Dashboard:
+        'Overview of your student management system',
+
+      Students:
+        'Manage student records and information',
+
+      Academics:
+        'Manage courses, faculty and academic information',
+
+      Attendance:
+        'Monitor student attendance records',
+
+      Examinations:
+        'Manage examination marks and grades',
+
+      Fees:
+        'Track student fee payments',
+
+      Notifications:
+        'Important alerts and announcements',
+
+      Timetable:
+        'View weekly class timetable'
+    }
+
+    return descriptions[activePage]
+  }
+
+  // ================= DASHBOARD =================
+
+  const renderDashboard = () => {
+    const goodStudents = studentList.filter(
+      (student) => student.status === 'Good'
+    ).length
+
+    const riskStudents = studentList.filter(
+      (student) => student.status === 'At Risk'
+    ).length
+
+    return (
+      <>
+        <div className="stats">
+
+          <div className="card">
+            <div className="card-icon blue">
+              👨‍🎓
+            </div>
+
+            <div>
+              <p>Total Students</p>
+
+              <h2>{studentList.length}</h2>
+
+              <small className="positive">
+                ↑ 12% this year
+              </small>
+            </div>
+          </div>
+
+
+          <div className="card">
+            <div className="card-icon green">
+              📚
+            </div>
+
+            <div>
+              <p>Total Courses</p>
+
+              <h2>{courses.length}</h2>
+
+              <small className="positive">
+                Active courses
+              </small>
+            </div>
+          </div>
+
+
+          <div className="card">
+            <div className="card-icon purple">
+              📅
+            </div>
+
+            <div>
+              <p>Good Standing</p>
+
+              <h2>{goodStudents}</h2>
+
+              <small>
+                Students performing well
+              </small>
+            </div>
+          </div>
+
+
+          <div className="card">
+            <div className="card-icon red">
+              ⚠️
+            </div>
+
+            <div>
+              <p>At Risk</p>
+
+              <h2>{riskStudents}</h2>
+
+              <small className="negative">
+                Needs attention
+              </small>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div className="dashboard-grid">
+
+          <div className="panel">
+
+            <div className="panel-header">
+
+              <div>
+                <h2>Attendance Overview</h2>
+
+                <p>
+                  Average attendance by month
+                </p>
+              </div>
+
+              <select>
+                <option>2026</option>
+                <option>2025</option>
+              </select>
+
+            </div>
+
+
+            <div className="chart">
+
+              <div className="bar-container">
+                <div
+                  className="bar"
+                  style={{ height: '70%' }}
+                >
+                  70%
+                </div>
+
+                <small>Jan</small>
+              </div>
+
+
+              <div className="bar-container">
+                <div
+                  className="bar"
+                  style={{ height: '78%' }}
+                >
+                  78%
+                </div>
+
+                <small>Feb</small>
+              </div>
+
+
+              <div className="bar-container">
+                <div
+                  className="bar"
+                  style={{ height: '82%' }}
+                >
+                  82%
+                </div>
+
+                <small>Mar</small>
+              </div>
+
+
+              <div className="bar-container">
+                <div
+                  className="bar"
+                  style={{ height: '76%' }}
+                >
+                  76%
+                </div>
+
+                <small>Apr</small>
+              </div>
+
+
+              <div className="bar-container">
+                <div
+                  className="bar"
+                  style={{ height: '88%' }}
+                >
+                  88%
+                </div>
+
+                <small>May</small>
+              </div>
+
+
+              <div className="bar-container">
+                <div
+                  className="bar"
+                  style={{ height: '91%' }}
+                >
+                  91%
+                </div>
+
+                <small>Jun</small>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div className="panel">
+
+            <div className="panel-header">
+
+              <div>
+                <h2>Recent Alerts</h2>
+
+                <p>
+                  Important notifications
+                </p>
+              </div>
+
+            </div>
+
+
+            <div className="alert-item">
+
+              <div className="alert-icon">
+                ⚠️
+              </div>
+
+              <div>
+                <strong>
+                  Low Attendance
+                </strong>
+
+                <p>
+                  Arjun Kumar - 60%
+                </p>
+              </div>
+
+            </div>
+
+
+            <div className="alert-item">
+
+              <div className="alert-icon">
+                💰
+              </div>
+
+              <div>
+                <strong>
+                  Pending Fees
+                </strong>
+
+                <p>
+                  3 students have pending fees
+                </p>
+              </div>
+
+            </div>
+
+
+            <div className="alert-item">
+
+              <div className="alert-icon">
+                📝
+              </div>
+
+              <div>
+                <strong>
+                  Exam Results
+                </strong>
+
+                <p>
+                  Results updated today
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div className="panel students-panel">
+
+          <div className="panel-header">
+
+            <div>
+              <h2>Recent Students</h2>
+
+              <p>
+                Latest student records
+              </p>
+            </div>
+
+            <button
+              onClick={() =>
+                setActivePage('Students')
+              }
+            >
+              View All
+            </button>
+
+          </div>
+
+
+          <div className="table-container">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Student Name</th>
+                  <th>Course</th>
+                  <th>Attendance</th>
+                  <th>Performance</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+
+              <tbody>
+
+                {studentList
+                  .slice(0, 5)
+                  .map((student) => (
+
+                    <tr key={student.id}>
+
+                      <td>
+                        {student.id}
+                      </td>
+
+                      <td>
+                        {student.name}
+                      </td>
+
+                      <td>
+                        {student.course}
+                      </td>
+
+                      <td>
+                        {student.attendance}%
+                      </td>
+
+                      <td>
+                        {student.performance}
+                      </td>
+
+                      <td>
+
+                        <span
+                          className={`status ${
+                            student.status === 'Good'
+                              ? 'good'
+                              : student.status === 'At Risk'
+                                ? 'risk'
+                                : 'normal'
+                          }`}
+                        >
+                          {student.status}
+                        </span>
+
+                      </td>
+
+                    </tr>
+
+                  ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+      </>
+    )
+  }
+  // ================= STUDENTS PAGE =================
+
+  const renderStudents = () => {
+    return (
+      <div className="panel">
+
+        <div className="panel-header students-tools">
+
+          <div>
+            <h2>Student Management</h2>
+            <p>
+              Add, edit, search and delete student records
+            </p>
+          </div>
+
+          <div className="student-actions">
+
+            <input
+              type="text"
+              placeholder="Search students..."
+              value={searchTerm}
+              onChange={(e) =>
+                setSearchTerm(e.target.value)
+              }
+            />
+
+            <button
+              className="primary-btn"
+              onClick={() =>
+                setShowStudentForm(true)
+              }
+            >
+              + Add Student
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div className="table-container">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Attendance</th>
+                <th>Performance</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+
+            <tbody>
+
+              {filteredStudents.map((student) => (
+
+                <tr key={student.id}>
+
+                  <td>{student.id}</td>
+
+                  <td>{student.name}</td>
+
+                  <td>{student.course}</td>
+
+                  <td>
+                    {student.attendance}%
+                  </td>
+
+                  <td>
+                    {student.performance}
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={`status ${
+                        student.status === 'Good'
+                          ? 'good'
+                          : student.status === 'At Risk'
+                            ? 'risk'
+                            : 'normal'
+                      }`}
+                    >
+                      {student.status}
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <div className="action-buttons">
+
+                      <button
+                        className="edit-btn"
+                        onClick={() =>
+                          openEditStudent(student)
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() =>
+                          handleDeleteStudent(
+                            student.id
+                          )
+                        }
+                      >
+                        🗑️
+                      </button>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+
+              {filteredStudents.length === 0 && (
+
+                <tr>
+
+                  <td
+                    colSpan="7"
+                    className="empty-message"
+                  >
+                    No students found.
+                  </td>
+
+                </tr>
+
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+    )
+  }
+
+
+  // ================= ACADEMICS PAGE =================
+
+  const renderAcademics = () => {
+    return (
+      <div className="panel">
+
+        <div className="panel-header">
+
+          <div>
+            <h2>Academic Courses</h2>
+
+            <p>
+              Courses, faculty and credit information
+            </p>
+          </div>
+
+          <button className="primary-btn">
+            + Add Course
+          </button>
+
+        </div>
+
+
+        <div className="course-grid">
+
+          {courses.map((course) => (
+
+            <div
+              className="course-card"
+              key={course.code}
+            >
+
+              <div className="course-icon">
+                📚
+              </div>
+
+
+              <div>
+
+                <span className="course-code">
+                  {course.code}
+                </span>
+
+                <h3>
+                  {course.name}
+                </h3>
+
+                <p>
+                  <strong>Faculty:</strong>{' '}
+                  {course.faculty}
+                </p>
+
+                <p>
+                  <strong>Credits:</strong>{' '}
+                  {course.credits}
+                </p>
+
+                <span className="semester">
+                  {course.semester}
+                </span>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </div>
+    )
+  }
+
+
+  // ================= ATTENDANCE PAGE =================
+
+  const renderAttendance = () => {
+    return (
+      <div className="panel">
+
+        <div className="panel-header">
+
+          <div>
+            <h2>Attendance Management</h2>
+
+            <p>
+              Monitor student attendance
+            </p>
+          </div>
+
+          <button className="primary-btn">
+            + Mark Attendance
+          </button>
+
+        </div>
+
+
+        <div className="attendance-summary">
+
+          <div>
+            <span>
+              Average Attendance
+            </span>
+
+            <strong>
+              78.0%
+            </strong>
+          </div>
+
+
+          <div>
+            <span>
+              Good Attendance
+            </span>
+
+            <strong>
+              2 Students
+            </strong>
+          </div>
+
+
+          <div>
+            <span>
+              At Risk
+            </span>
+
+            <strong>
+              1 Student
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div className="table-container">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Total Classes</th>
+                <th>Present</th>
+                <th>Attendance</th>
+                <th>Status</th>
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              {attendance.map((record) => (
+
+                <tr key={record.id}>
+
+                  <td>
+                    {record.student}
+                  </td>
+
+                  <td>
+                    {record.course}
+                  </td>
+
+                  <td>
+                    {record.totalClasses}
+                  </td>
+
+                  <td>
+                    {record.present}
+                  </td>
+
+                  <td>
+                    <strong>
+                      {record.percentage}%
+                    </strong>
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={`status ${
+                        record.status === 'Good'
+                          ? 'good'
+                          : record.status === 'At Risk'
+                            ? 'risk'
+                            : 'normal'
+                      }`}
+                    >
+                      {record.status}
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+    )
+  }
+
+
+  // ================= EXAMINATIONS PAGE =================
+
+  const renderExaminations = () => {
+    return (
+      <div className="panel">
+
+        <div className="panel-header">
+
+          <div>
+
+            <h2>
+              Examination Results
+            </h2>
+
+            <p>
+              Student marks, totals and grades
+            </p>
+
+          </div>
+
+          <button className="primary-btn">
+            + Add Marks
+          </button>
+
+        </div>
+
+
+        <div className="table-container">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Internal</th>
+                <th>External</th>
+                <th>Total</th>
+                <th>Grade</th>
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              {exams.map((exam) => (
+
+                <tr key={exam.id}>
+
+                  <td>
+                    {exam.student}
+                  </td>
+
+                  <td>
+                    {exam.subject}
+                  </td>
+
+                  <td>
+                    {exam.internal}
+                  </td>
+
+                  <td>
+                    {exam.external}
+                  </td>
+
+                  <td>
+                    <strong>
+                      {exam.total}/100
+                    </strong>
+                  </td>
+
+                  <td>
+                    <span className="grade-badge">
+                      {exam.grade}
+                    </span>
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+    )
+  }
+
+
+  // ================= FEES PAGE =================
+
+  const renderFees = () => {
+
+    const totalFees = fees.reduce(
+      (sum, fee) => sum + fee.total,
+      0
+    )
+
+    const totalPaid = fees.reduce(
+      (sum, fee) => sum + fee.paid,
+      0
+    )
+
+    const totalPending = fees.reduce(
+      (sum, fee) => sum + fee.pending,
+      0
+    )
+
+
+    return (
+      <>
+
+        <div className="stats">
+
+          <div className="card">
+
+            <div className="card-icon blue">
+              💰
+            </div>
+
+            <div>
+
+              <p>Total Fees</p>
+
+              <h2>
+                ₹{totalFees.toLocaleString()}
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div className="card">
+
+            <div className="card-icon green">
+              ✅
+            </div>
+
+            <div>
+
+              <p>Total Paid</p>
+
+              <h2>
+                ₹{totalPaid.toLocaleString()}
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div className="card">
+
+            <div className="card-icon red">
+              ⏳
+            </div>
+
+            <div>
+
+              <p>Total Pending</p>
+
+              <h2>
+                ₹{totalPending.toLocaleString()}
+              </h2>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div className="panel">
+
+          <div className="panel-header">
+
+            <div>
+
+              <h2>
+                Fee Management
+              </h2>
+
+              <p>
+                Track student fee payments
+              </p>
+
+            </div>
+
+            <button className="primary-btn">
+              + Record Payment
+            </button>
+
+          </div>
+
+
+          <div className="table-container">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Student</th>
+                  <th>Total Fees</th>
+                  <th>Paid</th>
+                  <th>Pending</th>
+                  <th>Status</th>
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+
+                {fees.map((fee) => (
+
+                  <tr key={fee.id}>
+
+                    <td>
+                      {fee.student}
+                    </td>
+
+                    <td>
+                      ₹{fee.total.toLocaleString()}
+                    </td>
+
+                    <td>
+                      ₹{fee.paid.toLocaleString()}
+                    </td>
+
+                    <td>
+                      ₹{fee.pending.toLocaleString()}
+                    </td>
+
+                    <td>
+
+                      <span
+                        className={`status ${
+                          fee.status === 'Paid'
+                            ? 'good'
+                            : 'normal'
+                        }`}
+                      >
+                        {fee.status}
+                      </span>
+
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </>
+    )
+  }
+  // ================= NOTIFICATIONS PAGE =================
+
+  const renderNotifications = () => {
+
+    return (
+      <>
+
+        <div className="panel">
+
+          <div className="panel-header">
+
+            <div>
+              <h2>Notifications</h2>
+
+              <p>
+                Manage important announcements and updates
+              </p>
+            </div>
+
+            <button
+              className="primary-btn"
+              onClick={() => setShowNotificationForm(true)}
+            >
+              + New Notification
+            </button>
+
+          </div>
+
+
+          <div className="notification-list">
+
+            {notifications.length === 0 ? (
+
+              <div className="empty-message">
+                No notifications available.
+              </div>
+
+            ) : (
+
+              notifications.map((notification) => (
+
+                <div
+                  className="notification-card"
+                  key={notification.id}
+                >
+
+                  <div className="notification-big-icon">
+                    🔔
+                  </div>
+
+                  <div className="notification-content">
+
+                    <h3>
+                      {notification.title}
+                    </h3>
+
+                    <p>
+                      {notification.message}
+                    </p>
+
+                    <small>
+                      {notification.date}
+                    </small>
+
+                  </div>
+
+                </div>
+
+              ))
+
+            )}
+
+          </div>
+
+        </div>
+
+      </>
+    )
+  }
+
+
+
+  // ================= TIMETABLE PAGE =================
+
+  const renderTimetable = () => {
+
+    const fullTimetable = [
+      ...timetable,
+
+      {
+        id: 7,
+        day: 'Wednesday',
+        time: '09:00 - 10:00',
+        subject: 'Data Structures',
+        room: 'Room 204',
+        faculty: 'Prof. Sharma'
+      },
+
+      {
+        id: 8,
+        day: 'Wednesday',
+        time: '11:00 - 12:00',
+        subject: 'Engineering Mathematics',
+        room: 'Room 105',
+        faculty: 'Prof. Reddy'
+      },
+
+      {
+        id: 9,
+        day: 'Thursday',
+        time: '10:00 - 11:00',
+        subject: 'Artificial Intelligence',
+        room: 'AI Lab',
+        faculty: 'Dr. Kumar'
+      },
+
+      {
+        id: 10,
+        day: 'Thursday',
+        time: '14:00 - 15:00',
+        subject: 'Machine Learning',
+        room: 'ML Lab',
+        faculty: 'Dr. Priya'
+      },
+
+      {
+        id: 11,
+        day: 'Friday',
+        time: '09:00 - 10:00',
+        subject: 'Engineering Mathematics',
+        room: 'Room 105',
+        faculty: 'Prof. Reddy'
+      },
+
+      {
+        id: 12,
+        day: 'Friday',
+        time: '11:00 - 12:00',
+        subject: 'Data Structures',
+        room: 'Room 204',
+        faculty: 'Prof. Sharma'
+      }
+    ]
+
+
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday'
+    ]
+
+
+    return (
+      <>
+
+        <div className="panel">
+
+          <div className="panel-header">
+
+            <div>
+
+              <h2>
+                Weekly Timetable
+              </h2>
+
+              <p>
+                View your weekly class schedule
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="timetable-grid">
+
+            {days.map((day) => {
+
+              const dayClasses =
+                fullTimetable.filter(
+                  (item) => item.day === day
+                )
+
+
+              return (
+
+                <div
+                  className="day-column"
+                  key={day}
+                >
+
+                  <div className="day-header">
+                    {day}
+                  </div>
+
+
+                  {dayClasses.length === 0 ? (
+
+                    <div className="empty-day">
+                      No classes
+                    </div>
+
+                  ) : (
+
+                    dayClasses.map((item) => (
+
+                      <div
+                        className="class-card"
+                        key={item.id}
+                      >
+
+                        <strong>
+                          {item.subject}
+                        </strong>
+
+                        <p>
+                          🕐 {item.time}
+                        </p>
+
+                        <p>
+                          📍 {item.room}
+                        </p>
+
+                        <small>
+                          {item.faculty}
+                        </small>
+
+                      </div>
+
+                    ))
+
+                  )}
+
+                </div>
+
+              )
+
+            })}
+
+          </div>
+
+        </div>
+
+      </>
+    )
+  }
+
+
+
+  // ================= PAGE SWITCHER =================
+
+  const renderActivePage = () => {
+
+    switch (activePage) {
+
+      case 'Dashboard':
+        return renderDashboard()
+
+      case 'Students':
+        return renderStudents()
+
+      case 'Academics':
+        return renderAcademics()
+
+      case 'Attendance':
+        return renderAttendance()
+
+      case 'Examinations':
+        return renderExaminations()
+
+      case 'Fees':
+        return renderFees()
+
+      case 'Notifications':
+        return renderNotifications()
+
+      case 'Timetable':
+        return renderTimetable()
+
+      default:
+        return renderDashboard()
+    }
+  }
+
+
+
+  // ================= MAIN UI =================
+
+  return (
+
+    <div className="app">
+
+      {/* ================= SIDEBAR ================= */}
+
+      <aside className="sidebar">
+
+        <div className="logo">
+
+          <div className="logo-icon">
+            🎓
+          </div>
+
+          <div>
+
+            <h2>
+              Student ERP
+            </h2>
+
+            <span>
+              Integrated Management
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <nav>
+
+          {menuItems.map((item) => (
+
+            <a
+              key={item.name}
+              className={
+                activePage === item.name
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                setActivePage(item.name)
+              }
+            >
+
+              <span>
+                {item.icon}
+              </span>
+
+              <span>
+                {item.name}
+              </span>
+
+            </a>
+
+          ))}
+
+        </nav>
+
+
+        <div className="sidebar-bottom">
+
+          <a
+            onClick={() =>
+              alert('Settings module coming soon!')
+            }
+          >
+            ⚙️ Settings
+          </a>
+
+        </div>
+
+      </aside>
+
+
+
+      {/* ================= MAIN CONTENT ================= */}
+
+      <main className="main">
+
+        <div className="topbar">
+
+          <div>
+
+            <h1>
+              {activePage}
+            </h1>
+
+            <p>
+              {getPageDescription()}
+            </p>
+
+          </div>
+
+
+          <div className="profile">
+
+            <div className="notification">
+              🔔
+            </div>
+
+
+            <div className="avatar">
+              SR
+            </div>
+
+
+            <div>
+
+              <strong>
+                Admin
+              </strong>
+
+              <small>
+                Administrator
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* CURRENT PAGE */}
+
+        {renderActivePage()}
+
+      </main>
+
+
+
+      {/* ================= STUDENT MODAL ================= */}
+
+      {showStudentForm && (
+
+        <div
+          className="modal-overlay"
+          onClick={closeStudentForm}
+        >
+
+          <div
+            className="modal"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <div className="modal-header">
+
+              <h2>
+                {editingStudent
+                  ? 'Edit Student'
+                  : 'Add New Student'}
+              </h2>
+
+              <button
+                onClick={closeStudentForm}
+              >
+                ✕
+              </button>
+
+            </div>
+
+
+            <form
+              onSubmit={
+                editingStudent
+                  ? handleEditStudent
+                  : handleAddStudent
+              }
+            >
+
+              <label>
+                Student Name
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter student name"
+                value={newStudent.name}
+                onChange={(e) =>
+                  handleStudentChange(
+                    'name',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Course
+              </label>
+
+              <select
+                value={newStudent.course}
+                onChange={(e) =>
+                  handleStudentChange(
+                    'course',
+                    e.target.value
+                  )
+                }
+                required
+              >
+
+                <option value="">
+                  Select Course
+                </option>
+
+                <option value="Artificial Intelligence">
+                  Artificial Intelligence
+                </option>
+
+                <option value="Computer Science">
+                  Computer Science
+                </option>
+
+                <option value="Data Science">
+                  Data Science
+                </option>
+
+              </select>
+
+
+              <label>
+                Attendance %
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="100"
+                placeholder="Enter attendance"
+                value={newStudent.attendance}
+                onChange={(e) =>
+                  handleStudentChange(
+                    'attendance',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Performance
+              </label>
+
+              <select
+                value={newStudent.performance}
+                onChange={(e) =>
+                  handleStudentChange(
+                    'performance',
+                    e.target.value
+                  )
+                }
+              >
+
+                <option value="Excellent">
+                  Excellent
+                </option>
+
+                <option value="Good">
+                  Good
+                </option>
+
+                <option value="Average">
+                  Average
+                </option>
+
+                <option value="Needs Improvement">
+                  Needs Improvement
+                </option>
+
+              </select>
+
+
+              <div className="modal-buttons">
+
+                <button
+                  type="button"
+                  onClick={closeStudentForm}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-btn"
+                >
+                  {editingStudent
+                    ? 'Update Student'
+                    : 'Add Student'}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+
+      {/* ================= NOTIFICATION MODAL ================= */}
+
+      {showNotificationForm && (
+
+        <div
+          className="modal-overlay"
+          onClick={() =>
+            setShowNotificationForm(false)
+          }
+        >
+
+          <div
+            className="modal"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <div className="modal-header">
+
+              <h2>
+                New Notification
+              </h2>
+
+              <button
+                onClick={() =>
+                  setShowNotificationForm(false)
+                }
+              >
+                ✕
+              </button>
+
+            </div>
+
+
+            <form onSubmit={addNotification}>
+
+              <label>
+                Notification Title
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter notification title"
+                value={newNotification.title}
+                onChange={(e) =>
+                  setNewNotification({
+                    ...newNotification,
+                    title: e.target.value
+                  })
+                }
+                required
+              />
+
+
+              <label>
+                Message
+              </label>
+
+              <textarea
+                placeholder="Enter notification message"
+                value={newNotification.message}
+                onChange={(e) =>
+                  setNewNotification({
+                    ...newNotification,
+                    message: e.target.value
+                  })
+                }
+                required
+              />
+
+
+              <div className="modal-buttons">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowNotificationForm(false)
+                  }
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-btn"
+                >
+                  Publish Notification
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </div>
+
+  )
+}
+
+export default App
