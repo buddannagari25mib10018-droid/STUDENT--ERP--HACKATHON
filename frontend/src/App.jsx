@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import './App.css'
 
@@ -283,13 +284,42 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState('')
 
-  const [courses] = useState(initialCourses)
+  const [courses, setCourses] = useState(initialCourses)
 
-  const [attendance] = useState(initialAttendance)
+  const [attendance, setAttendance] = useState(initialAttendance)
 
-  const [exams] = useState(initialExams)
+  const [exams, setExams] = useState(initialExams)
 
-  const [fees] = useState(initialFees)
+  const [fees, setFees] = useState(initialFees)
+
+  const [showAttendanceForm, setShowAttendanceForm] = useState(false)
+
+  const [editingAttendance, setEditingAttendance] = useState(null)
+
+  const [newAttendance, setNewAttendance] = useState({
+    student: '',
+    course: '',
+    totalClasses: '',
+    present: ''
+  })
+
+  const [showExamForm, setShowExamForm] = useState(false)
+
+  const [editingExam, setEditingExam] = useState(null)
+
+  const [newExam, setNewExam] = useState({
+    student: '',
+    subject: '',
+    internal: '',
+    external: ''
+  })
+
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
+
+  const [paymentData, setPaymentData] = useState({
+    student: '',
+    amount: ''
+  })
 
   const [showStudentForm, setShowStudentForm] = useState(false)
 
@@ -300,6 +330,18 @@ function App() {
     course: '',
     attendance: '',
     performance: 'Good'
+  })
+
+  const [showCourseForm, setShowCourseForm] = useState(false)
+
+  const [editingCourse, setEditingCourse] = useState(null)
+
+  const [newCourse, setNewCourse] = useState({
+    code: '',
+    name: '',
+    faculty: '',
+    credits: '',
+    semester: 'Semester 1'
   })
 
   const [notifications, setNotifications] = useState([
@@ -457,6 +499,417 @@ function App() {
         studentList.filter((student) => student.id !== id)
       )
     }
+  }
+
+  // ================= COURSE FUNCTIONS =================
+
+  const handleCourseChange = (name, value) => {
+    setNewCourse({
+      ...newCourse,
+      [name]: value
+    })
+  }
+
+  const closeCourseForm = () => {
+    setShowCourseForm(false)
+    setEditingCourse(null)
+
+    setNewCourse({
+      code: '',
+      name: '',
+      faculty: '',
+      credits: '',
+      semester: 'Semester 1'
+    })
+  }
+
+  const handleAddCourse = (e) => {
+    e.preventDefault()
+
+    if (
+      !newCourse.code ||
+      !newCourse.name ||
+      !newCourse.faculty ||
+      !newCourse.credits
+    ) {
+      alert('Please fill all required fields.')
+      return
+    }
+
+    const duplicate = courses.some(
+      (course) =>
+        course.code.toLowerCase() === newCourse.code.toLowerCase()
+    )
+
+    if (duplicate) {
+      alert('A course with this code already exists.')
+      return
+    }
+
+    const course = {
+      code: newCourse.code,
+      name: newCourse.name,
+      faculty: newCourse.faculty,
+      credits: Number(newCourse.credits),
+      semester: newCourse.semester
+    }
+
+    setCourses([...courses, course])
+
+    closeCourseForm()
+  }
+
+  const openEditCourse = (course) => {
+    setEditingCourse(course)
+
+    setNewCourse({
+      code: course.code,
+      name: course.name,
+      faculty: course.faculty,
+      credits: course.credits,
+      semester: course.semester
+    })
+
+    setShowCourseForm(true)
+  }
+
+  const handleEditCourse = (e) => {
+    e.preventDefault()
+
+    const updatedList = courses.map((course) =>
+      course.code === editingCourse.code
+        ? {
+            ...course,
+            name: newCourse.name,
+            faculty: newCourse.faculty,
+            credits: Number(newCourse.credits),
+            semester: newCourse.semester
+          }
+        : course
+    )
+
+    setCourses(updatedList)
+
+    closeCourseForm()
+  }
+
+  const handleDeleteCourse = (code) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this course?'
+    )
+
+    if (confirmDelete) {
+      setCourses(courses.filter((course) => course.code !== code))
+    }
+  }
+
+  // ================= ATTENDANCE FUNCTIONS =================
+
+  const computeAttendanceStatus = (percentage) => {
+    if (percentage >= 85) return 'Good'
+    if (percentage < 65) return 'At Risk'
+    return 'Normal'
+  }
+
+  const handleAttendanceChange = (name, value) => {
+    setNewAttendance({
+      ...newAttendance,
+      [name]: value
+    })
+  }
+
+  const closeAttendanceForm = () => {
+    setShowAttendanceForm(false)
+    setEditingAttendance(null)
+
+    setNewAttendance({
+      student: '',
+      course: '',
+      totalClasses: '',
+      present: ''
+    })
+  }
+
+  const handleAddAttendance = (e) => {
+    e.preventDefault()
+
+    if (
+      !newAttendance.student ||
+      !newAttendance.course ||
+      !newAttendance.totalClasses ||
+      !newAttendance.present
+    ) {
+      alert('Please fill all required fields.')
+      return
+    }
+
+    const total = Number(newAttendance.totalClasses)
+    const present = Number(newAttendance.present)
+
+    if (present > total) {
+      alert('Present classes cannot exceed total classes.')
+      return
+    }
+
+    const percentage = Math.round((present / total) * 1000) / 10
+
+    const newId =
+      attendance.length > 0
+        ? Math.max(...attendance.map((record) => record.id)) + 1
+        : 1
+
+    const record = {
+      id: newId,
+      student: newAttendance.student,
+      course: newAttendance.course,
+      totalClasses: total,
+      present: present,
+      percentage: percentage,
+      status: computeAttendanceStatus(percentage)
+    }
+
+    setAttendance([...attendance, record])
+
+    closeAttendanceForm()
+  }
+
+  const openEditAttendance = (record) => {
+    setEditingAttendance(record)
+
+    setNewAttendance({
+      student: record.student,
+      course: record.course,
+      totalClasses: record.totalClasses,
+      present: record.present
+    })
+
+    setShowAttendanceForm(true)
+  }
+
+  const handleEditAttendance = (e) => {
+    e.preventDefault()
+
+    const total = Number(newAttendance.totalClasses)
+    const present = Number(newAttendance.present)
+
+    if (present > total) {
+      alert('Present classes cannot exceed total classes.')
+      return
+    }
+
+    const percentage = Math.round((present / total) * 1000) / 10
+
+    const updatedList = attendance.map((record) =>
+      record.id === editingAttendance.id
+        ? {
+            ...record,
+            student: newAttendance.student,
+            course: newAttendance.course,
+            totalClasses: total,
+            present: present,
+            percentage: percentage,
+            status: computeAttendanceStatus(percentage)
+          }
+        : record
+    )
+
+    setAttendance(updatedList)
+
+    closeAttendanceForm()
+  }
+
+  const handleDeleteAttendance = (id) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this attendance record?'
+    )
+
+    if (confirmDelete) {
+      setAttendance(
+        attendance.filter((record) => record.id !== id)
+      )
+    }
+  }
+
+  // ================= EXAMINATION FUNCTIONS =================
+
+  const computeGrade = (total) => {
+    if (total >= 85) return 'A'
+    if (total >= 70) return 'B'
+    if (total >= 50) return 'C'
+    return 'D'
+  }
+
+  const handleExamChange = (name, value) => {
+    setNewExam({
+      ...newExam,
+      [name]: value
+    })
+  }
+
+  const closeExamForm = () => {
+    setShowExamForm(false)
+    setEditingExam(null)
+
+    setNewExam({
+      student: '',
+      subject: '',
+      internal: '',
+      external: ''
+    })
+  }
+
+  const handleAddExam = (e) => {
+    e.preventDefault()
+
+    if (
+      !newExam.student ||
+      !newExam.subject ||
+      !newExam.internal ||
+      !newExam.external
+    ) {
+      alert('Please fill all required fields.')
+      return
+    }
+
+    const internal = Number(newExam.internal)
+    const external = Number(newExam.external)
+
+    if (internal > 30 || external > 70) {
+      alert('Internal marks max is 30 and external marks max is 70.')
+      return
+    }
+
+    const total = internal + external
+
+    const newId =
+      exams.length > 0
+        ? Math.max(...exams.map((exam) => exam.id)) + 1
+        : 1
+
+    const exam = {
+      id: newId,
+      student: newExam.student,
+      subject: newExam.subject,
+      internal: internal,
+      external: external,
+      total: total,
+      grade: computeGrade(total)
+    }
+
+    setExams([...exams, exam])
+
+    closeExamForm()
+  }
+
+  const openEditExam = (exam) => {
+    setEditingExam(exam)
+
+    setNewExam({
+      student: exam.student,
+      subject: exam.subject,
+      internal: exam.internal,
+      external: exam.external
+    })
+
+    setShowExamForm(true)
+  }
+
+  const handleEditExam = (e) => {
+    e.preventDefault()
+
+    const internal = Number(newExam.internal)
+    const external = Number(newExam.external)
+
+    if (internal > 30 || external > 70) {
+      alert('Internal marks max is 30 and external marks max is 70.')
+      return
+    }
+
+    const total = internal + external
+
+    const updatedList = exams.map((exam) =>
+      exam.id === editingExam.id
+        ? {
+            ...exam,
+            student: newExam.student,
+            subject: newExam.subject,
+            internal: internal,
+            external: external,
+            total: total,
+            grade: computeGrade(total)
+          }
+        : exam
+    )
+
+    setExams(updatedList)
+
+    closeExamForm()
+  }
+
+  const handleDeleteExam = (id) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this exam record?'
+    )
+
+    if (confirmDelete) {
+      setExams(exams.filter((exam) => exam.id !== id))
+    }
+  }
+
+  // ================= FEE / PAYMENT FUNCTIONS =================
+
+  const openPaymentForm = (studentName) => {
+    setPaymentData({
+      student: studentName || (fees[0] ? fees[0].student : ''),
+      amount: ''
+    })
+
+    setShowPaymentForm(true)
+  }
+
+  const closePaymentForm = () => {
+    setShowPaymentForm(false)
+
+    setPaymentData({
+      student: '',
+      amount: ''
+    })
+  }
+
+  const handleRecordPayment = (e) => {
+    e.preventDefault()
+
+    if (!paymentData.student || !paymentData.amount) {
+      alert('Please fill all fields.')
+      return
+    }
+
+    const amount = Number(paymentData.amount)
+
+    if (amount <= 0) {
+      alert('Enter a valid payment amount.')
+      return
+    }
+
+    const updatedFees = fees.map((fee) => {
+      if (fee.student !== paymentData.student) {
+        return fee
+      }
+
+      const newPaid = Math.min(fee.paid + amount, fee.total)
+      const newPending = fee.total - newPaid
+
+      return {
+        ...fee,
+        paid: newPaid,
+        pending: newPending,
+        status: newPending === 0 ? 'Paid' : 'Partial'
+      }
+    })
+
+    setFees(updatedFees)
+
+    closePaymentForm()
   }
 
   // ================= NOTIFICATION FUNCTIONS =================
@@ -1059,7 +1512,10 @@ function App() {
             </p>
           </div>
 
-          <button className="primary-btn">
+          <button
+            className="primary-btn"
+            onClick={() => setShowCourseForm(true)}
+          >
             + Add Course
           </button>
 
@@ -1075,8 +1531,32 @@ function App() {
               key={course.code}
             >
 
-              <div className="course-icon">
-                📚
+              <div className="course-card-top">
+
+                <div className="course-icon">
+                  📚
+                </div>
+
+                <div className="action-buttons">
+
+                  <button
+                    className="edit-btn"
+                    onClick={() => openEditCourse(course)}
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    className="delete-btn"
+                    onClick={() =>
+                      handleDeleteCourse(course.code)
+                    }
+                  >
+                    🗑️
+                  </button>
+
+                </div>
+
               </div>
 
 
@@ -1110,6 +1590,13 @@ function App() {
 
           ))}
 
+
+          {courses.length === 0 && (
+            <div className="empty-message">
+              No courses found.
+            </div>
+          )}
+
         </div>
 
       </div>
@@ -1120,6 +1607,25 @@ function App() {
   // ================= ATTENDANCE PAGE =================
 
   const renderAttendance = () => {
+
+    const avgAttendance =
+      attendance.length > 0
+        ? (
+            attendance.reduce(
+              (sum, record) => sum + record.percentage,
+              0
+            ) / attendance.length
+          ).toFixed(1)
+        : '0.0'
+
+    const goodCount = attendance.filter(
+      (record) => record.status === 'Good'
+    ).length
+
+    const atRiskCount = attendance.filter(
+      (record) => record.status === 'At Risk'
+    ).length
+
     return (
       <div className="panel">
 
@@ -1133,7 +1639,10 @@ function App() {
             </p>
           </div>
 
-          <button className="primary-btn">
+          <button
+            className="primary-btn"
+            onClick={() => setShowAttendanceForm(true)}
+          >
             + Mark Attendance
           </button>
 
@@ -1148,7 +1657,7 @@ function App() {
             </span>
 
             <strong>
-              78.0%
+              {avgAttendance}%
             </strong>
           </div>
 
@@ -1159,7 +1668,7 @@ function App() {
             </span>
 
             <strong>
-              2 Students
+              {goodCount} Student{goodCount === 1 ? '' : 's'}
             </strong>
           </div>
 
@@ -1170,7 +1679,7 @@ function App() {
             </span>
 
             <strong>
-              1 Student
+              {atRiskCount} Student{atRiskCount === 1 ? '' : 's'}
             </strong>
           </div>
 
@@ -1190,6 +1699,7 @@ function App() {
                 <th>Present</th>
                 <th>Attendance</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
 
             </thead>
@@ -1239,9 +1749,51 @@ function App() {
 
                   </td>
 
+                  <td>
+
+                    <div className="action-buttons">
+
+                      <button
+                        className="edit-btn"
+                        onClick={() =>
+                          openEditAttendance(record)
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() =>
+                          handleDeleteAttendance(record.id)
+                        }
+                      >
+                        🗑️
+                      </button>
+
+                    </div>
+
+                  </td>
+
                 </tr>
 
               ))}
+
+
+              {attendance.length === 0 && (
+
+                <tr>
+
+                  <td
+                    colSpan="7"
+                    className="empty-message"
+                  >
+                    No attendance records found.
+                  </td>
+
+                </tr>
+
+              )}
 
             </tbody>
 
@@ -1274,7 +1826,10 @@ function App() {
 
           </div>
 
-          <button className="primary-btn">
+          <button
+            className="primary-btn"
+            onClick={() => setShowExamForm(true)}
+          >
             + Add Marks
           </button>
 
@@ -1294,6 +1849,7 @@ function App() {
                 <th>External</th>
                 <th>Total</th>
                 <th>Grade</th>
+                <th>Actions</th>
               </tr>
 
             </thead>
@@ -1333,9 +1889,49 @@ function App() {
                     </span>
                   </td>
 
+                  <td>
+
+                    <div className="action-buttons">
+
+                      <button
+                        className="edit-btn"
+                        onClick={() => openEditExam(exam)}
+                      >
+                        ✏️
+                      </button>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() =>
+                          handleDeleteExam(exam.id)
+                        }
+                      >
+                        🗑️
+                      </button>
+
+                    </div>
+
+                  </td>
+
                 </tr>
 
               ))}
+
+
+              {exams.length === 0 && (
+
+                <tr>
+
+                  <td
+                    colSpan="7"
+                    className="empty-message"
+                  >
+                    No exam records found.
+                  </td>
+
+                </tr>
+
+              )}
 
             </tbody>
 
@@ -1448,7 +2044,10 @@ function App() {
 
             </div>
 
-            <button className="primary-btn">
+            <button
+              className="primary-btn"
+              onClick={() => openPaymentForm()}
+            >
               + Record Payment
             </button>
 
@@ -1467,6 +2066,7 @@ function App() {
                   <th>Paid</th>
                   <th>Pending</th>
                   <th>Status</th>
+                  <th>Actions</th>
                 </tr>
 
               </thead>
@@ -1508,9 +2108,39 @@ function App() {
 
                     </td>
 
+                    <td>
+
+                      <button
+                        className="edit-btn"
+                        disabled={fee.pending === 0}
+                        onClick={() =>
+                          openPaymentForm(fee.student)
+                        }
+                      >
+                        💳 Pay
+                      </button>
+
+                    </td>
+
                   </tr>
 
                 ))}
+
+
+                {fees.length === 0 && (
+
+                  <tr>
+
+                    <td
+                      colSpan="6"
+                      className="empty-message"
+                    >
+                      No fee records found.
+                    </td>
+
+                  </tr>
+
+                )}
 
               </tbody>
 
@@ -2107,6 +2737,577 @@ function App() {
                   {editingStudent
                     ? 'Update Student'
                     : 'Add Student'}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+
+      {/* ================= COURSE MODAL ================= */}
+
+      {showCourseForm && (
+
+        <div
+          className="modal-overlay"
+          onClick={closeCourseForm}
+        >
+
+          <div
+            className="modal"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <div className="modal-header">
+
+              <h2>
+                {editingCourse
+                  ? 'Edit Course'
+                  : 'Add New Course'}
+              </h2>
+
+              <button
+                onClick={closeCourseForm}
+              >
+                ✕
+              </button>
+
+            </div>
+
+
+            <form
+              onSubmit={
+                editingCourse
+                  ? handleEditCourse
+                  : handleAddCourse
+              }
+            >
+
+              <label>
+                Course Code
+              </label>
+
+              <input
+                type="text"
+                placeholder="e.g. CS103"
+                value={newCourse.code}
+                onChange={(e) =>
+                  handleCourseChange(
+                    'code',
+                    e.target.value
+                  )
+                }
+                disabled={!!editingCourse}
+                required
+              />
+
+
+              <label>
+                Course Name
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter course name"
+                value={newCourse.name}
+                onChange={(e) =>
+                  handleCourseChange(
+                    'name',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Faculty
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter faculty name"
+                value={newCourse.faculty}
+                onChange={(e) =>
+                  handleCourseChange(
+                    'faculty',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Credits
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                max="6"
+                placeholder="Enter credits"
+                value={newCourse.credits}
+                onChange={(e) =>
+                  handleCourseChange(
+                    'credits',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Semester
+              </label>
+
+              <select
+                value={newCourse.semester}
+                onChange={(e) =>
+                  handleCourseChange(
+                    'semester',
+                    e.target.value
+                  )
+                }
+              >
+
+                <option value="Semester 1">
+                  Semester 1
+                </option>
+
+                <option value="Semester 2">
+                  Semester 2
+                </option>
+
+                <option value="Semester 3">
+                  Semester 3
+                </option>
+
+                <option value="Semester 4">
+                  Semester 4
+                </option>
+
+              </select>
+
+
+              <div className="modal-buttons">
+
+                <button
+                  type="button"
+                  onClick={closeCourseForm}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-btn"
+                >
+                  {editingCourse
+                    ? 'Update Course'
+                    : 'Add Course'}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+
+      {/* ================= ATTENDANCE MODAL ================= */}
+
+      {showAttendanceForm && (
+
+        <div
+          className="modal-overlay"
+          onClick={closeAttendanceForm}
+        >
+
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            <div className="modal-header">
+
+              <h2>
+                {editingAttendance
+                  ? 'Edit Attendance Record'
+                  : 'Mark Attendance'}
+              </h2>
+
+              <button onClick={closeAttendanceForm}>
+                ✕
+              </button>
+
+            </div>
+
+
+            <form
+              onSubmit={
+                editingAttendance
+                  ? handleEditAttendance
+                  : handleAddAttendance
+              }
+            >
+
+              <label>
+                Student Name
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter student name"
+                value={newAttendance.student}
+                onChange={(e) =>
+                  handleAttendanceChange(
+                    'student',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Course
+              </label>
+
+              <select
+                value={newAttendance.course}
+                onChange={(e) =>
+                  handleAttendanceChange(
+                    'course',
+                    e.target.value
+                  )
+                }
+                required
+              >
+
+                <option value="">
+                  Select Course
+                </option>
+
+                <option value="Artificial Intelligence">
+                  Artificial Intelligence
+                </option>
+
+                <option value="Computer Science">
+                  Computer Science
+                </option>
+
+                <option value="Data Science">
+                  Data Science
+                </option>
+
+              </select>
+
+
+              <label>
+                Total Classes
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                placeholder="Enter total classes"
+                value={newAttendance.totalClasses}
+                onChange={(e) =>
+                  handleAttendanceChange(
+                    'totalClasses',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <label>
+                Present
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                placeholder="Enter classes attended"
+                value={newAttendance.present}
+                onChange={(e) =>
+                  handleAttendanceChange(
+                    'present',
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+
+              <div className="modal-buttons">
+
+                <button
+                  type="button"
+                  onClick={closeAttendanceForm}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-btn"
+                >
+                  {editingAttendance
+                    ? 'Update Record'
+                    : 'Mark Attendance'}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+
+      {/* ================= EXAM MODAL ================= */}
+
+      {showExamForm && (
+
+        <div
+          className="modal-overlay"
+          onClick={closeExamForm}
+        >
+
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            <div className="modal-header">
+
+              <h2>
+                {editingExam ? 'Edit Marks' : 'Add Marks'}
+              </h2>
+
+              <button onClick={closeExamForm}>
+                ✕
+              </button>
+
+            </div>
+
+
+            <form
+              onSubmit={
+                editingExam ? handleEditExam : handleAddExam
+              }
+            >
+
+              <label>
+                Student Name
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter student name"
+                value={newExam.student}
+                onChange={(e) =>
+                  handleExamChange('student', e.target.value)
+                }
+                required
+              />
+
+
+              <label>
+                Subject
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter subject name"
+                value={newExam.subject}
+                onChange={(e) =>
+                  handleExamChange('subject', e.target.value)
+                }
+                required
+              />
+
+
+              <label>
+                Internal Marks (out of 30)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="30"
+                placeholder="Enter internal marks"
+                value={newExam.internal}
+                onChange={(e) =>
+                  handleExamChange('internal', e.target.value)
+                }
+                required
+              />
+
+
+              <label>
+                External Marks (out of 70)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="70"
+                placeholder="Enter external marks"
+                value={newExam.external}
+                onChange={(e) =>
+                  handleExamChange('external', e.target.value)
+                }
+                required
+              />
+
+
+              <div className="modal-buttons">
+
+                <button
+                  type="button"
+                  onClick={closeExamForm}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-btn"
+                >
+                  {editingExam ? 'Update Marks' : 'Add Marks'}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+
+      {/* ================= PAYMENT MODAL ================= */}
+
+      {showPaymentForm && (
+
+        <div
+          className="modal-overlay"
+          onClick={closePaymentForm}
+        >
+
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            <div className="modal-header">
+
+              <h2>
+                Record Payment
+              </h2>
+
+              <button onClick={closePaymentForm}>
+                ✕
+              </button>
+
+            </div>
+
+
+            <form onSubmit={handleRecordPayment}>
+
+              <label>
+                Student
+              </label>
+
+              <select
+                value={paymentData.student}
+                onChange={(e) =>
+                  setPaymentData({
+                    ...paymentData,
+                    student: e.target.value
+                  })
+                }
+                required
+              >
+
+                <option value="">
+                  Select Student
+                </option>
+
+                {fees.map((fee) => (
+
+                  <option
+                    key={fee.id}
+                    value={fee.student}
+                  >
+                    {fee.student} (Pending: ₹
+                    {fee.pending.toLocaleString()})
+                  </option>
+
+                ))}
+
+              </select>
+
+
+              <label>
+                Amount (₹)
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                placeholder="Enter payment amount"
+                value={paymentData.amount}
+                onChange={(e) =>
+                  setPaymentData({
+                    ...paymentData,
+                    amount: e.target.value
+                  })
+                }
+                required
+              />
+
+
+              <div className="modal-buttons">
+
+                <button
+                  type="button"
+                  onClick={closePaymentForm}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-btn"
+                >
+                  Record Payment
                 </button>
 
               </div>

@@ -459,6 +459,11 @@ tbody tr:hover {
   border: 1px solid #fecaca;
 }
 
+.edit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .empty-message {
   text-align: center;
   padding: 30px;
@@ -484,6 +489,17 @@ tbody tr:hover {
 .course-card:hover {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
+}
+
+.course-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.course-card-top .course-icon {
+  margin-bottom: 0;
 }
 
 .course-icon {
